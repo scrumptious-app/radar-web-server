@@ -1,17 +1,68 @@
-from src import app
-from flask import render_template, request
+###############
+### Imports ###
+###############
+from __future__ import print_function
+from flask import Flask, render_template, request
+import json
 import rauth
 import time
+import argparse
+import pprint
+import requests
+import sys
+import urllib
+from urllib2 import HTTPError
+from urllib import quote
+from urllib import urlencode
 
-################
-### API Keys ###
-################
+app = Flask(__name__)
 
-#Obtain these from Yelp's manage access page
-consumer_key = "YOUR_KEY"
-consumer_secret = "YOUR_SECRET"
-token = "YOUR_TOKEN"
-token_secret = "YOUR_TOKEN_SECRET"
+##############################
+### API Keys and Constants ###
+##############################
+
+# OAuth credentials
+CLIENT_ID = "-y1QYEvrMVZRK2Mdwk6EQA"
+CLIENT_SECRET = "ibYWJgzvOB6qLXfHKKVNNF7OuuepMdRhcAP3fQReaROUQEVekEEHvwUP66IqLSY2"
+
+# API constants, you shouldn't have to change these.
+API_HOST = 'https://api.yelp.com'
+SEARCH_PATH = '/v3/businesses/search'
+BUSINESS_PATH = '/v3/businesses/'  # Business ID will come after slash.
+TOKEN_PATH = '/oauth2/token'
+GRANT_TYPE = 'client_credentials'
+
+# Defaults for our simple example.
+DEFAULT_TERM = 'dinner'
+DEFAULT_LOCATION = 'San Francisco, CA'
+SEARCH_LIMIT = 3
+
+# Get Access Token
+def obtain_bearer_token(host, path):
+    """Given a bearer token, send a GET request to the API.
+    Args:
+        host (str): The domain host of the API.
+        path (str): The path of the API after the domain.
+        url_params (dict): An optional set of query parameters in the request.
+    Returns:
+        str: OAuth bearer token, obtained using client_id and client_secret.
+    Raises:
+        HTTPError: An error occurs from the HTTP request.
+    """
+    url = '{0}{1}'.format(host, quote(path.encode('utf8')))
+    assert CLIENT_ID, "Please supply your client_id."
+    assert CLIENT_SECRET, "Please supply your client_secret."
+    data = urlencode({
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'grant_type': GRANT_TYPE,
+    })
+    headers = {
+        'content-type': 'application/x-www-form-urlencoded',
+    }
+    response = requests.request('POST', url, data=data, headers=headers)
+    bearer_token = response.json()['access_token']
+    return bearer_token
 
 ##############
 ### Routes ###
@@ -51,14 +102,9 @@ def searchForBusiness():
   		businessInfo['category'] = data[0]['alias']
   		businessInfo['url'] = data['url']
   		return businessInfo
+  	else:
+  		return json.dumps({'error':'try again'})
 
-def main():
-	# locations = [(39.98,-82.98),(42.24,-83.61),(41.33,-89.13)]
-	# api_calls = []
-	for latitude, longitude in locations:
-    	params = searchBusinesses(lat,long)
-    	api_calls.append(get_results(params))
-    	#Be a good internet citizen and rate-limit yourself
-    	time.sleep(1.0)
-     
-  ##Do other processing
+if __name__ == "__main__":
+    app.debug = True
+    app.run('0.0.0.0', port=8000)
