@@ -1,0 +1,4 @@
+image: "scrumptious-web-server:<tag>"
+port: 8080
+volume_mounts: null
+env_variables: ["APP_PORT"]
