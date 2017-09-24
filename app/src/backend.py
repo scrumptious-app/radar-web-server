@@ -347,7 +347,7 @@ def searchMain():
 @app.route("/nearby", methods=['GET'])
 def getNearby():
     nearbyPlaces = {}
-    goodPlacesList = {}
+    goodPlacesList = {'data': []}
     if flask.request.method == "GET":
         if 'name' and 'latitude' and 'longitude' in flask.request.args:
             latitude = str(flask.request.args['latitude'])
@@ -363,7 +363,7 @@ def getNearby():
             while goodPlacesCount < 15:
                 searchResults = searchManually(nearbyPlaces[index]['name'], latitude, longitude)
                 if len(searchResults) > 0:
-                    goodPlacesList[goodPlacesCount] = searchResults
+                    goodPlacesList['data'].append(searchResults)
                     goodPlacesCount += 1
                 index += 1
             # for place in places:
