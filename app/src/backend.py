@@ -8,6 +8,7 @@ import pprint
 import requests
 import sys
 import urllib
+import os
 
 # This client code can run on Python 2.x or 3.x.  Your imports can be
 # simpler if you only need one of those.
@@ -228,7 +229,10 @@ def getCategory(alias):
     if alias == "":
         return "none"
 
-    with open("categories.json") as json_file:
+
+    path = os.path.dirname(os.path.realpath(__file__))                                                                                        
+    with open(os.path.join(path ,"categories.json")) as json_file:
+    # with open("categories.json") as json_file:
         json_data = json.load(json_file)
         
         if alias in MAIN_CATEGORIES:
