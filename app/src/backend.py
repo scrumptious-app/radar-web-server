@@ -185,31 +185,33 @@ def searchManually(name, latitude, longitude):
 
     try:
         response = query_api(name, latitude, longitude)
+
         if response == "":
             return json.dumps(businessInfo)
-        # print(response['price'])
-        # print({'price': response['price'].encode('ascii', 'ignore')})
-        businessInfo['name'] = response['name'].encode('ascii', 'ignore')
-        if 'price' in response:
-            businessInfo['price'] = response['price'].encode('ascii', 'ignore')
         else:
-            businessInfo['price'] = ""
+            # print(response['price'])
+            # print({'price': response['price'].encode('ascii', 'ignore')})
+            businessInfo['name'] = response['name'].encode('ascii', 'ignore')
+            if 'price' in response:
+                businessInfo['price'] = response['price'].encode('ascii', 'ignore')
+            else:
+                businessInfo['price'] = ""
 
-        if 'rating' in response:
-            businessInfo['rating'] = response['rating']
-        else:
-            businessInfo['rating'] = ""
-        #print("response category alias: ", response['categories'][0]['alias'])
-        #print(type(getCategory(response['categories'][0]['alias'])))
-        if response['categories'][0]['alias']:
-                businessInfo['category'] = getCategory(response['categories'][0]['alias'])
-        if 'image_url' in response:
-            businessInfo['image'] = response['image_url']
-        if 'distance' in response:
-            businessInfo['distance'] = response['distance']
-        businessInfo['id'] = response['id'].encode('ascii', 'ignore')
+            if 'rating' in response:
+                businessInfo['rating'] = response['rating']
+            else:
+                businessInfo['rating'] = ""
+            #print("response category alias: ", response['categories'][0]['alias'])
+            #print(type(getCategory(response['categories'][0]['alias'])))
+            if response['categories'][0]['alias']:
+                    businessInfo['category'] = getCategory(response['categories'][0]['alias'])
+            if 'image_url' in response:
+                businessInfo['image'] = response['image_url']
+            if 'distance' in response:
+                businessInfo['distance'] = response['distance']
+            businessInfo['id'] = response['id'].encode('ascii', 'ignore')
 
-        print(businessInfo)
+            print(businessInfo)
         # pprint(businessInfo)
 
     except HTTPError as error:
@@ -300,31 +302,33 @@ def searchMain():
 
             try:
                 response = query_api(name, latitude, longitude)
+
                 if response == "":
                     return json.dumps(businessInfo)
+                else:
                 # print(response['price'])
                 # print({'price': response['price'].encode('ascii', 'ignore')})
-                businessInfo['name'] = response['name'].encode('ascii', 'ignore')
-                if 'price' in response:
-                    businessInfo['price'] = response['price'].encode('ascii', 'ignore')
-                else:
-                    businessInfo['price'] = ""
+                    businessInfo['name'] = response['name'].encode('ascii', 'ignore')
+                    if 'price' in response:
+                        businessInfo['price'] = response['price'].encode('ascii', 'ignore')
+                    else:
+                        businessInfo['price'] = ""
 
-                if 'rating' in response:
-                    businessInfo['rating'] = response['rating']
-                else:
-                    businessInfo['rating'] = ""
-                #print("response category alias: ", response['categories'][0]['alias'])
-                #print(type(getCategory(response['categories'][0]['alias'])))
-                if response['categories'][0]['alias']:
-                    businessInfo['category'] = getCategory(response['categories'][0]['alias'])
-                if 'image_url' in response:
-                    businessInfo['image'] = response['image_url']
-                if 'distance' in response:
-                    businessInfo['distance'] = response['distance']
-                businessInfo['id'] = response['id'].encode('ascii', 'ignore')
+                    if 'rating' in response:
+                        businessInfo['rating'] = response['rating']
+                    else:
+                        businessInfo['rating'] = ""
+                    #print("response category alias: ", response['categories'][0]['alias'])
+                    #print(type(getCategory(response['categories'][0]['alias'])))
+                    if response['categories'][0]['alias']:
+                        businessInfo['category'] = getCategory(response['categories'][0]['alias'])
+                    if 'image_url' in response:
+                        businessInfo['image'] = response['image_url']
+                    if 'distance' in response:
+                        businessInfo['distance'] = response['distance']
+                    businessInfo['id'] = response['id'].encode('ascii', 'ignore')
 
-                print(businessInfo)
+                    print(businessInfo)
                 # pprint(businessInfo)
 
             except HTTPError as error:
