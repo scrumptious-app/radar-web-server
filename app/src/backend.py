@@ -203,8 +203,8 @@ def searchManually(name, latitude, longitude):
                 businessInfo['rating'] = ""
             #print("response category alias: ", response['categories'][0]['alias'])
             #print(type(getCategory(response['categories'][0]['alias'])))
-            print("response: ", response)
-            if response['categories'][0]['alias']:
+            # print("response: ", response)
+            if len(response['categories']) > 0:
                     businessInfo['category'] = getCategory(response['categories'][0]['alias'])
             if 'image_url' in response:
                 businessInfo['image'] = response['image_url']
