@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from src import app
-from __future__ import print_function
 import flask
 from flask import Flask, render_template, request
 import argparse
