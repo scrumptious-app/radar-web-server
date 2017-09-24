@@ -166,24 +166,24 @@ def query_api(term, latitude, longitude):
 def searchManually(name, latitude, longitude):
     businessInfo = {}
 
-    parser = argparse.ArgumentParser()
+    # parser = argparse.ArgumentParser()
 
-    parser.add_argument('-q', '--term', dest='term', default=name,
-                        type=str, help='Search term (default: %(default)s)')
-    # parser.add_argument('-l', '--location', dest='location',
-    #                     default=DEFAULT_LOCATION, type=str,
-    #                     help='Search location (default: %(default)s)')
-    parser.add_argument('-lat', '--latitude', dest='latitude',
-                        default=latitude, type=float,
-                        help='Search latitude (default: %(default)f)')
-    parser.add_argument('-long', '--longitude', dest='longitude',
-                        default=longitude, type=float,
-                        help='Search longitude (default: %(default)f)')
+    # parser.add_argument('-q', '--term', dest='term', default=name,
+    #                     type=str, help='Search term (default: %(default)s)')
+    # # parser.add_argument('-l', '--location', dest='location',
+    # #                     default=DEFAULT_LOCATION, type=str,
+    # #                     help='Search location (default: %(default)s)')
+    # parser.add_argument('-lat', '--latitude', dest='latitude',
+    #                     default=latitude, type=float,
+    #                     help='Search latitude (default: %(default)f)')
+    # parser.add_argument('-long', '--longitude', dest='longitude',
+    #                     default=longitude, type=float,
+    #                     help='Search longitude (default: %(default)f)')
 
-    input_values = parser.parse_args()
+    # input_values = parser.parse_args()
 
     try:
-        response = query_api(input_values.term, input_values.latitude, input_values.longitude)
+        response = query_api(name, latitude, longitude)
         if response == "":
             return json.dumps(businessInfo)
         # print(response['price'])
@@ -278,24 +278,24 @@ def searchMain():
             latitude = flask.request.args['latitude']
             longitude = flask.request.args['longitude']
 
-            parser = argparse.ArgumentParser()
+            # parser = argparse.ArgumentParser()
 
-            parser.add_argument('-q', '--term', dest='term', default=name,
-                                type=str, help='Search term (default: %(default)s)')
-            # parser.add_argument('-l', '--location', dest='location',
-            #                     default=DEFAULT_LOCATION, type=str,
-            #                     help='Search location (default: %(default)s)')
-            parser.add_argument('-lat', '--latitude', dest='latitude',
-                                default=latitude, type=float,
-                                help='Search latitude (default: %(default)f)')
-            parser.add_argument('-long', '--longitude', dest='longitude',
-                                default=longitude, type=float,
-                                help='Search longitude (default: %(default)f)')
+            # parser.add_argument('-q', '--term', dest='term', default=name,
+            #                     type=str, help='Search term (default: %(default)s)')
+            # # parser.add_argument('-l', '--location', dest='location',
+            # #                     default=DEFAULT_LOCATION, type=str,
+            # #                     help='Search location (default: %(default)s)')
+            # parser.add_argument('-lat', '--latitude', dest='latitude',
+            #                     default=latitude, type=float,
+            #                     help='Search latitude (default: %(default)f)')
+            # parser.add_argument('-long', '--longitude', dest='longitude',
+            #                     default=longitude, type=float,
+            #                     help='Search longitude (default: %(default)f)')
 
-            input_values = parser.parse_args()
+            # input_values = parser.parse_args()
 
             try:
-                response = query_api(input_values.term, input_values.latitude, input_values.longitude)
+                response = query_api(name, latitude, longitude)
                 if response == "":
                     return json.dumps(businessInfo)
                 # print(response['price'])
