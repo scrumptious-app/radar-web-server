@@ -365,25 +365,67 @@ def getNearby():
             #     nearbyPlaces[index] = {"name": }
     return json.dumps(goodPlacesList)
 
-@app.route("/menu")
-def getMenuItems(data):
-    menuInfo = {}
+@app.route("/menu", methods=['GET'])
+def getMenuItems():
+    #menuInfo = {}
     menuItems = {}
     num_elements = 0
+    if flask.request.method == "GET":
+        if 'business' in flask.request.args:
+            business = str(flask.request.args['business'])
+            # url = "https://api.locu.com/v2/venue/search"
+            #payload = {'api_key': 'dfde5a3db7684a9955eed4596c6007ef18ed6ef7', 'fields': 'name,menus', 'venue_queries': {'name': business, 'menus': json.dumps({"$present":True})}}
+            
+            # payload = '''
+            # {
+            #     "api_key" : "dfde5a3db7684a9955eed4596c6007ef18ed6ef7",
+            #     "fields" : [ "name", "location", "menus"
+            #     ],
+            #     "venue_queries" : [
+            #         {
+            #             "name" : "bistro central parc",
+            #             "menus" : { "$present" : true }
+            #         }
+            #     ]
+            # }
+            # '''
 
-    url = "https://api.locu.com/v2/venue/search"
-    payload = {'api_key': 'dfde5a3db7684a9955eed4596c6007ef18ed6ef7', 'fields': 'name,menus', 'venue_queries': {'name': 'bistro central parc', 'menus': json.dumps({"$present":True})}
-    menuInfo = requests.get(url, params=payload).json()['venues'][0]['menus'][0]['sections'][0]['subsections']
+            #menuInfo = requests.get(url, params=payload)
+            data = '{"api_key" : "dfde5a3db7684a9955eed4596c6007ef18ed6ef7","fields" : [ "name", "location", "menus"],"venue_queries" : [{"name" : "' + business +'","menus" : { "$present" : true }}]}'
+
+            subsections = requests.post('https://api.locu.com/v2/venue/search', data=data).json()['venues'][0]['menus'][0]['sections'][0]['subsections']
+            # print(type(menuInfo))
+            # print(menuInfo)
+            # return "hello"
+            # sections = menuInfo['venues'][0]['menus'][0]['sections'][0]['subsections']
 
 
-    while ((num_elements <= 10) and (len(menuInfo) > num_elements)):
-        for x in menuInfo[contents]:
-            menuItems[menuInfo[contents][x]['name']] = menuInfo[contents][x]['price']
-            num_elements = num_elements + 1
-            if (num_elements > 10):
-                break
-    """Should return a dictionary that has keys as foods and values as prices"""            
-    return menuItems
+            # while ((num_elements <= 10) and (len(menuInfo) > num_elements)):
+            menuItemIndex = 0
+            #while menuItemIndex < 10:
+            for x in subsections[0]['contents']:
+                if 'name' and 'price' in x:
+                    menuItems[x['name']] = x['price']
+                    menuItemIndex += 1
+                elif 'name' in x and 'price' not in x:
+                    menuItems[x['name']] = ""
+                    menuItemIndex += 1
+                # print(x)
+
+            # print("count: ", len(subsections))
+                    # for y in x['contents']:
+                    #     print(y)
+                    #     if 'name' and 'price' in y:
+                    #         menuItems[menuItemIndex]['name'] = y['name']
+                    #         menuItems[menuItemIndex]['price'] = y['price']
+                    #         menuItemIndex += 1
+                # num_elements = num_elements + 1
+                    # if (num_elements > 10):
+                    #     break
+            """Should return a dictionary that has foods as keys and prices as values"""            
+            return json.dumps(menuItems)
+
+    return json.dumps(menuItems)
 
 
     '''
