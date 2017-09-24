@@ -37,12 +37,9 @@ CLIENT_ID = "-y1QYEvrMVZRK2Mdwk6EQA"
 CLIENT_SECRET = "ibYWJgzvOB6qLXfHKKVNNF7OuuepMdRhcAP3fQReaROUQEVekEEHvwUP66IqLSY2"
 
 # Locu API 
+LOCU_API_HOST = 'https://api.locu.com'
+LOCU_SEARCH_PATH = '/v2/venue/search'
 LOCU_API_KEYS = ["dfde5a3db7684a9955eed4596c6007ef18ed6ef7", "ecc4cdde72c7e50c9f859a71d3408cfa2db8eb8f", "f165c0e560d0700288c2f70cf6b26e0c2de0348f", "09aa1c8487370126671d36ad8a27a69866c0cd73", "fcb35836fa320e8c7f7382a4a02a29146a100094", "bdeed6bf5eae32da59856986e058743fb11be970"]
-
-# Facebook Graph API
-FACEBOOK_APP_ID = "2000750090180739"
-FACEBOOK_APP_SECRET = "10c470942e45a67e4c6e3f22057d3948"
-FACEBOOK_TOKEN = "EAACEdEose0cBAI9uki1Ke0YsgJW4icDYGFRxuzxW1QbFqBfbEDx1kdrzH7XacIYbx0mHkdCNtKf9tH6NezzxREVEY54xjFlslZCrL0ZBRt8kvek9ZBZBE7CyWJUGYlO8KqClvAUgv0NZAHeiT3pDblywj0AZAsHFMg24cWlmp6R4ICkybpeVUBusAyvdrjsMoZD"
 
 # API constants, you shouldn't have to change these.
 API_HOST = 'https://api.yelp.com'
@@ -157,7 +154,7 @@ def query_api(term, latitude, longitude):
 
     if not businesses:
         print(u'No businesses for {0} in {1},{2} found.'.format(term, latitude, longitude))
-        return ""
+        return
 
     business_id = businesses[0]['id']
 
@@ -171,8 +168,12 @@ def query_api(term, latitude, longitude):
 
     return response
 
-def searchManually(name, latitude, longitude):
+def main():
     businessInfo = {}
+
+    name = DEFAULT_TERM
+    latitude = DEFAULT_LATITUDE
+    longitude = DEFAULT_LONGITUDE
 
     parser = argparse.ArgumentParser()
 
@@ -192,28 +193,12 @@ def searchManually(name, latitude, longitude):
 
     try:
         response = query_api(input_values.term, input_values.latitude, input_values.longitude)
-        if response == "":
-            return businessInfo
         # print(response['price'])
         # print({'price': response['price'].encode('ascii', 'ignore')})
         businessInfo['name'] = response['name'].encode('ascii', 'ignore')
-        if 'price' in response:
-            businessInfo['price'] = response['price'].encode('ascii', 'ignore')
-        else:
-            businessInfo['price'] = ""
-
-        if 'rating' in response:
-            businessInfo['rating'] = response['rating']
-        else:
-            businessInfo['rating'] = ""
-        #print("response category alias: ", response['categories'][0]['alias'])
-        #print(type(getCategory(response['categories'][0]['alias'])))
-        if 'categories' in response:
-            businessInfo['category'] = getCategory(response['categories'][0]['alias'])
-        if 'image_url' in response:
-            businessInfo['image'] = response['image_url']
-        if 'distance' in response:
-            businessInfo['distance'] = response['distance']
+        businessInfo['price'] = response['price'].encode('ascii', 'ignore')
+        businessInfo['rating'] = response['rating']
+        # # businessInfo['category'] = business['alias']
         businessInfo['id'] = response['id'].encode('ascii', 'ignore')
 
         print(businessInfo)
@@ -227,8 +212,6 @@ def searchManually(name, latitude, longitude):
                 error.read(),
             )
         )
-
-    return json.dumps(businessInfo)
 
 def getCategory(alias):
     # print("alias: ", alias)
@@ -277,6 +260,8 @@ def searchMain():
         # data = flask.request.data
         # print(data)
 
+        
+        print(flask.request.args)
         #if all(x in request.args for x in ['name', 'latitude', 'longitude']):
         if 'name' and 'latitude' and 'longitude' in flask.request.args:
             # name = request.args.get('name')
@@ -307,23 +292,11 @@ def searchMain():
                 # print(response['price'])
                 # print({'price': response['price'].encode('ascii', 'ignore')})
                 businessInfo['name'] = response['name'].encode('ascii', 'ignore')
-                if 'price' in response:
-                    businessInfo['price'] = response['price'].encode('ascii', 'ignore')
-                else:
-                    businessInfo['price'] = ""
-
-                if 'rating' in response:
-                    businessInfo['rating'] = response['rating']
-                else:
-                    businessInfo['rating'] = ""
+                businessInfo['price'] = response['price'].encode('ascii', 'ignore')
+                businessInfo['rating'] = response['rating']
                 #print("response category alias: ", response['categories'][0]['alias'])
                 #print(type(getCategory(response['categories'][0]['alias'])))
-                if 'categories' in response:
-                    businessInfo['category'] = getCategory(response['categories'][0]['alias'])
-                if 'image_url' in response:
-                    businessInfo['image'] = response['image_url']
-                if 'distance' in response:
-                    businessInfo['distance'] = response['distance']
+                businessInfo['category'] = getCategory(response['categories'][0]['alias'])
                 businessInfo['id'] = response['id'].encode('ascii', 'ignore')
 
                 print(businessInfo)
@@ -339,44 +312,16 @@ def searchMain():
                 )
     return json.dumps(businessInfo)
 
-@app.route("/nearby", methods=['GET'])
-def getNearby():
-    nearbyPlaces = {}
-    goodPlacesList = {}
-    if flask.request.method == "GET":
-        if 'name' and 'latitude' and 'longitude' in flask.request.args:
-            latitude = str(flask.request.args['latitude'])
-            longitude = str(flask.request.args['longitude'])
-            latLong = '%s,%s' % (latitude, longitude)
-            print(latLong)
-            url = "https://graph.facebook.com/search"
-            payload = {'type': 'place', 'center': latLong, 'limit':100, 'fields':'name,location,id', 'access_token': FACEBOOK_TOKEN}
-            nearbyPlaces = requests.get(url, params=payload).json()['data']
 
-            index = 0
-            goodPlacesCount = 0
-            while goodPlacesCount < 15:
-                searchResults = searchManually(nearbyPlaces[index]['name'], latitude, longitude)
-                if len(searchResults) > 0:
-                    goodPlacesList[goodPlacesCount] = searchResults
-                    goodPlacesCount += 1
-                index += 1
-            # for place in places:
-            #     nearbyPlaces[index] = {"name": }
-    return json.dumps(goodPlacesList)
-
-@app.route("/menu")
+"""Takes in menu data"""
 def getMenuItems(data):
     menuInfo = {}
     menuItems = {}
     num_elements = 0
 
-    url = "https://api.locu.com/v2/venue/search"
-    payload = {'api_key': 'dfde5a3db7684a9955eed4596c6007ef18ed6ef7', 'fields': 'name,menus', 'venue_queries': {'name': 'bistro central parc', 'menus': json.dumps({"$present":True})}
-    menuInfo = requests.get(url, params=payload).json()['venues'][0]['menus'][0]['sections'][0]['subsections']
+    menuInfo = data['venues'][0]['menus'][0]['sections'][0]['subsections']
 
-
-    while ((num_elements <= 10) and (len(menuInfo) > num_elements)):
+    while ((num_elements <= 10) and menuInfo[num_elements]):
         for x in menuInfo[contents]:
             menuItems[menuInfo[contents][x]['name']] = menuInfo[contents][x]['price']
             num_elements = num_elements + 1
@@ -386,21 +331,10 @@ def getMenuItems(data):
     return menuItems
 
 
-    '''
-    {
-        "api_key" : "dfde5a3db7684a9955eed4596c6007ef18ed6ef7",
-        "fields" : [ "name", "location", "menus"
-        ],
-        "venue_queries" : [
-            {
-                "name" : "bistro central parc",
-                "menus" : { "$present" : true }
-            }
-        ]
-    }
-    '''
 
-    
+
+
+
 
 
 
