@@ -186,7 +186,7 @@ def searchManually(name, latitude, longitude):
     try:
         response = query_api(name, latitude, longitude)
 
-        if response == "":
+        if response == "" or len(response['categories']) <= 0:
             return businessInfo
         else:
             # print(response['price'])
@@ -204,10 +204,10 @@ def searchManually(name, latitude, longitude):
             #print("response category alias: ", response['categories'][0]['alias'])
             #print(type(getCategory(response['categories'][0]['alias'])))
             # print("response: ", response)
-            if len(response['categories']) > 0:
-                businessInfo['category'] = getCategory(response['categories'][0]['alias'])
-            else:
-                businessInfo['category'] = ""
+            # if len(response['categories']) > 0:
+            businessInfo['category'] = getCategory(response['categories'][0]['alias'])
+            # else:
+                # businessInfo['category'] = ""
             if 'image_url' in response:
                 businessInfo['image'] = response['image_url']
             if 'distance' in response:
@@ -306,7 +306,7 @@ def searchMain():
             try:
                 response = query_api(name, latitude, longitude)
 
-                if response == "":
+                if response == "" or len(response['categories']) <= 0:
                     return json.dumps(businessInfo)
                 else:
                 # print(response['price'])
@@ -323,8 +323,8 @@ def searchMain():
                         businessInfo['rating'] = ""
                     #print("response category alias: ", response['categories'][0]['alias'])
                     #print(type(getCategory(response['categories'][0]['alias'])))
-                    if response['categories'][0]['alias']:
-                        businessInfo['category'] = getCategory(response['categories'][0]['alias'])
+                    # if response['categories'][0]['alias']:
+                    businessInfo['category'] = getCategory(response['categories'][0]['alias'])
                     if 'image_url' in response:
                         businessInfo['image'] = response['image_url']
                     if 'distance' in response:
