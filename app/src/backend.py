@@ -187,7 +187,7 @@ def searchManually(name, latitude, longitude):
         response = query_api(name, latitude, longitude)
 
         if response == "":
-            return json.dumps(businessInfo)
+            return businessInfo
         else:
             # print(response['price'])
             # print({'price': response['price'].encode('ascii', 'ignore')})
@@ -226,7 +226,7 @@ def searchManually(name, latitude, longitude):
             )
         )
 
-    return json.dumps(businessInfo)
+    return businessInfo
 
 def getCategory(alias):
     # print("alias: ", alias)
