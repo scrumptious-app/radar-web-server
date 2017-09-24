@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-To install requirements:
-`pip install -r requirements.txt`.
-Sample usage of the program:
-`python app.py --term="Mcdonalds" --latitude=42.302851 --longitude=-83.705924`
-"""
+from src import app
 from __future__ import print_function
 import flask
 from flask import Flask, render_template, request
@@ -27,8 +22,6 @@ except ImportError:
     from urllib2 import HTTPError
     from urllib import quote
     from urllib import urlencode
-
-app = Flask(__name__)
 
 # OAuth credential placeholders that must be filled in by users.
 # You can find them on
@@ -394,7 +387,3 @@ def getMenuItems():
 
     return json.dumps(menuItems)
 
-
-if __name__ == '__main__':
-    app.debug = True
-    app.run('0.0.0.0', port=8000)
