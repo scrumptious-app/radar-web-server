@@ -201,8 +201,8 @@ def searchManually(name, latitude, longitude):
             businessInfo['rating'] = ""
         #print("response category alias: ", response['categories'][0]['alias'])
         #print(type(getCategory(response['categories'][0]['alias'])))
-        if 'categories' in response:
-            businessInfo['category'] = getCategory(response['categories'][0]['alias'])
+        if response['categories'][0]['alias']:
+                businessInfo['category'] = getCategory(response['categories'][0]['alias'])
         if 'image_url' in response:
             businessInfo['image'] = response['image_url']
         if 'distance' in response:
@@ -316,7 +316,7 @@ def searchMain():
                     businessInfo['rating'] = ""
                 #print("response category alias: ", response['categories'][0]['alias'])
                 #print(type(getCategory(response['categories'][0]['alias'])))
-                if 'categories' in response:
+                if response['categories'][0]['alias']:
                     businessInfo['category'] = getCategory(response['categories'][0]['alias'])
                 if 'image_url' in response:
                     businessInfo['image'] = response['image_url']
